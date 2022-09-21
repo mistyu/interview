@@ -15,3 +15,4 @@ const debounce = (fn, time, immeadite = true) => {
     }, time)
   }
 }
+

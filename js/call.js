@@ -1,4 +1,4 @@
-Function.prototype.call = (_this, params) => {
+Function.prototype.call = (_this, ...params) => {
   _this = _this == null ? window : _this
   if (!/^(function|object)$/.test(_this)) {
     // Object 构造函数将给定的值包装为一个新对象。
@@ -9,7 +9,7 @@ Function.prototype.call = (_this, params) => {
   }
   const key = new Symbol('callThis')
   _this[key] = this
-  const result = _this[key](params)
+  const result = _this[key](...params)
   delete _this[key]
   return result
 }

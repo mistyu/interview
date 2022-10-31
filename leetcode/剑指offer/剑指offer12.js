@@ -36,5 +36,5 @@ const exist = (board, word) => {
     }
   }
 
-  return res ? res : false
+  return res
 }

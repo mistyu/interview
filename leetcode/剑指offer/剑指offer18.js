@@ -1,13 +1,13 @@
 const deleteNode = function(head, val) {
-  let count = new ListNode()
-  count.next = head
-  const dummy = count
+  let current = new ListNode()
+  current.next = head
+  const dummy = current
 
-  while (count && count.next) {
-    if (count.next.val === val) {
-      count.next = count.next.next
+  while (current && current.next) {
+    if (current.next.val === val) {
+      current.next = current.next.next
     }
-    count = count.next
+    current = current.next
   }
 
   return dummy.next

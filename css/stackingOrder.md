@@ -1,4 +1,4 @@
-## CSS七层叠顺序
+## CSS七层层叠顺序
 
 ![stacking order](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fbc59ae1adb5454c8c7f60582df10ff9~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
 

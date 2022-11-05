@@ -1,0 +1,53 @@
+## react 的一些基础知识
+
+### 受控与非受控组件
+受控组件：没有自己的状态，由父组件控制状态
+
+非受控组件：有自己的状态，由自己控制状态
+
+### setState
+1. 在同步代码中会进行状态合并，异步更新状态
+2. 在异步代码中同步更新状态
+3. setState第二个参数是一个回调函数，在状态更新，dom更新完成后调用
+
+### [生命周期](https://zh-hans.reactjs.org/docs/react-component.html#getsnapshotbeforeupdate)
+只有类组件中才有
+1. 挂载阶段
+`contructor`,
+`render`,
+`getDerivedStateFromProps`（这是个静态方法,当我们 props 或者 state 发生变化时会触发，并且会把返回的对象属性更新到 state）,
+`componentDidMount`
+
+2. 更新阶段
+`getDerivedStateFromProps`,
+`shouldComponentUpdate`（返回 false，则不会更新组件，可用于优化）,
+`render`,
+`getSnapshotBeforeUpdate`（render 之后，componentDidUpdate 之前，必须和 componentDidUpdate 一起使用）,
+`componentDidUpdate`
+
+3. 卸载阶段
+`componentWillUnmount`
+
+### hooks
+1. `useState`
+```jsx
+const [name, setName] = useState('mistyu')
+// 修改状态
+setName('test')
+```
+
+2. `useEffect`
+会在组件渲染到dom后执行
+
+第二个参数时一个数组，当指定的依赖发生变化时才会重新更新
+
+如果回调函数返回一个函数，则会在组件销毁的时候触发
+
+3. `useLayoutEffect`
+会在组件渲染到dom前执行
+
+为什么建议将修改 DOM 的操作里放到 useLayoutEffect 里，而不是 useEffect？
+
+在执行回调时 DOM渲染 已经被更新完，但浏览器渲染线程依旧处于被阻塞阶段，所以还没有发生回流、重绘过程。由于内存中的 DOM 已经被修改，通过 useLayoutEffect 可以拿到最新的 DOM 节点，并且在此时对 DOM 进行样式上的修改，假设修改了元素的 height，这些修改会在 DOM渲染 和 react 做出的更改一起被一次性渲染到屏幕上，依旧只有一次回流、重绘的代价。
+
+如果放在 useEffect 里，useEffect 的函数会在组件渲染到屏幕之后执行，此时对 DOM 进行修改，会触发浏览器再次进行回流、重绘，增加了性能上的损耗

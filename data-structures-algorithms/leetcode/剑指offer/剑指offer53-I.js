@@ -1,4 +1,4 @@
-var search = function(nums, target) {
+const search = (nums, target) => {
   const binarySearch = (nums, target, isLeft) => {
     let left = 0
     let right = nums.length - 1

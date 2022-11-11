@@ -27,3 +27,9 @@
 
 3. 卸载阶段
 `componentWillUnmount`
+
+### class组件和function组件
+* 区别1
+普通的 class 组件只要 setState 就会重新渲染，继承 PureComponent 就可以基于浅比较是否重新渲染
+
+function 组件在用 useState 的 setXxx 时，会对比 state 本身变没变，变了就会重新渲染

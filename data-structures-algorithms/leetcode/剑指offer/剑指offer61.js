@@ -5,6 +5,7 @@ function isStraight (nums) {
 
 	for (num of nums) {
 		if (num === 0) continue
+	
 		max = Math.max(num, max)
 		min = Math.min(num, min)
 

@@ -23,7 +23,7 @@ useEffect(() => () => {})
 3. `useLayoutEffect`
 会在组件渲染到dom前执行
 
-为什么建议将修改 DOM 的操作里放到 useLayoutEffect 里，而不是 useEffect？
+**为什么建议将修改 DOM 的操作里放到 useLayoutEffect 里，而不是 useEffect？**
 
 在执行回调时 DOM渲染 已经被更新完，但浏览器渲染线程依旧处于被阻塞阶段，所以还没有发生回流、重绘过程。由于内存中的 DOM 已经被修改，通过 useLayoutEffect 可以拿到最新的 DOM 节点，并且在此时对 DOM 进行样式上的修改，假设修改了元素的 height，这些修改会在 DOM渲染 和 react 做出的更改一起被一次性渲染到屏幕上，依旧只有一次回流、重绘的代价。
 
@@ -104,4 +104,4 @@ function App () {
 ```
 
 9. 自定义hooks
-必须以 use 开头
+**必须以 use 开头**

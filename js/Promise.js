@@ -103,7 +103,7 @@ class Promise {
   constructor(fn) {
     this.status = statusMap.PENDING
     this.value = undefined
-    this.reason = this.reason
+    this.reason = undefined
     // then fulfilled callback
     this.fulfilledCbs = []
     // then rejected callback

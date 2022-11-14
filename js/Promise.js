@@ -12,6 +12,7 @@ function fulfilledPromise(promise, value) {
   }
   promise.status = statusMap.FULFILLED
   promise.value = value
+  // promise 状态变更了需要执行 fulfilledCbs
   runCbs(promise.fulfilledCbs, value)
 }
 // 将 promise 设置成 rejected 状态
@@ -22,20 +23,23 @@ function rejectedPromise(promise, reason) {
   }
   promise.status = statusMap.REJECTED
   promise.reason = reason
+  // promise 状态变更了需要执行 rejectedCbs
   runCbs(promise.rejectedCbs, reason)
 }
 // 是否是函数
 function isFunction(fn) {
   return Object.prototype.toString.call(fn).toLocaleLowerCase() === '[object function]'
 }
+// 是否是 Promise 实例
 function isPromise(p) {
   return p instanceof Promise
 }
+// 是否是普通对象
 function isObject(obj) {
   return Object.prototype.toString.call(obj).toLocaleLowerCase() === '[object object]'
 }
 // 如何处理 then 里面的返回值promise
-function resolvePromise(promise, x) {
+function resolvedPromise(promise, x) {
   // promise 和 x 指向相同会出现循环调用直接 return
   if (promise === x) {
     rejectedPromise(promise, new TypeError('cant be the same'))
@@ -72,7 +76,7 @@ function resolvePromise(promise, x) {
             return
           }
           called = true
-          resolvePromise(promise, v)
+          resolvedPromise(promise, v)
         }, (r) => {
           if (called) {
             return
@@ -100,6 +104,7 @@ function runCbs(cbs, value) {
 }
 
 class Promise {
+  // Promise 接收一个函数作为参数
   constructor(fn) {
     this.status = statusMap.PENDING
     this.value = undefined
@@ -109,7 +114,7 @@ class Promise {
     // then rejected callback
     this.rejectedCbs = []
     fn((value) => {
-      resolvePromise(this, value)
+      resolvedPromise(this, value)
     }, (reason) => {
       rejectedPromise(this, reason)
     })
@@ -127,7 +132,7 @@ class Promise {
         try {
           const x = onFulfilled(promise1.value)
           // 根据返回值来决定返回的 promise2
-          resolvePromise(promise2, x)
+          resolvedPromise(promise2, x)
         } catch (error) {
           rejectedPromise(promise2, error)
         }
@@ -142,7 +147,7 @@ class Promise {
         try {
           const x = onRejected(promise1.value)
           // 根据返回值来决定返回的 promise2
-          resolvePromise(promise2, x)
+          resolvedPromise(promise2, x)
         } catch (error) {
           rejectedPromise(promise2, error)
         }
@@ -163,7 +168,7 @@ class Promise {
           try {
             const x = onFulfilled(promise1.value)
             // 根据返回值来决定返回的 promise2
-            resolvePromise(promise2, x)
+            resolvedPromise(promise2, x)
           } catch (error) {
             rejectedPromise(promise2, error)
           }
@@ -174,7 +179,7 @@ class Promise {
           try {
             const x = onRejected(promise1.reason)
             // 根据返回值来决定返回的 promise2
-            resolvePromise(promise2, x)
+            resolvedPromise(promise2, x)
           } catch (error) {
             rejectedPromise(promise2, error)
           }

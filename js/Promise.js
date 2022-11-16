@@ -4,9 +4,9 @@ const statusMap = {
   FULFILLED: 'fulfilled',
   REJECTED: 'rejected'
 }
-// 将 promise 设置成 fulfilled 状态
+// 将promise 设置为 fulfilled 状态
 function fulfilledPromise(promise, value) {
-  // 只能从 pending 状态转化为其他状态
+  //只能从 pending 状态转换为其他状态  
   if (promise.status !== statusMap.PENDING) {
     return
   }
@@ -15,15 +15,17 @@ function fulfilledPromise(promise, value) {
   // promise 状态变更了需要执行 fulfilledCbs
   runCbs(promise.fulfilledCbs, value)
 }
-// 将 promise 设置成 rejected 状态
+// 将 promise 设置为 rejected 状态
 function rejectedPromise(promise, reason) {
-  // 只能从 pending 状态转化为其他状态
+  // 只能从 pending 状态转换为其他状态
   if (promise.status !== statusMap.PENDING) {
     return
   }
   promise.status = statusMap.REJECTED
   promise.reason = reason
+
   // promise 状态变更了需要执行 rejectedCbs
+
   runCbs(promise.rejectedCbs, reason)
 }
 // 是否是函数
@@ -38,52 +40,60 @@ function isPromise(p) {
 function isObject(obj) {
   return Object.prototype.toString.call(obj).toLocaleLowerCase() === '[object object]'
 }
-// 如何处理 then 里面的返回值promise
+// 如何处理 then 里面的返回值 promise
 function resolvedPromise(promise, x) {
   // promise 和 x 指向相同会出现循环调用直接 return
   if (promise === x) {
     rejectedPromise(promise, new TypeError('cant be the same'))
     return
   }
-  // x 是一个 promise
+  // x 是一个 promise 
   if (isPromise(x)) {
     if (x.status === statusMap.FULFILLED) {
       fulfilledPromise(promise, x.value)
-    } else if (x.status === statusMap.REJECTED) {
+      return
+    }
+    if (x.status === statusMap.REJECTED) {
       rejectedPromise(promise, x.reason)
-    } else {
+      return
+    }
+    if (x.status === statusMap.PENDING) {
       x.then(() => {
         fulfilledPromise(promise, x.value)
       }, () => {
         rejectedPromise(promise, x.reason)
       })
+      return
     }
+    return
   }
   // x 是一个对象或一个函数
   if (isObject(x) || isFunction(x)) {
     let then
     let called = false
     try {
-      then = x.then()
+      then = x.then
     } catch (error) {
       rejectedPromise(promise, error)
       return
     }
     if (isFunction(then)) {
       try {
-        then.call(x, (v) => {
-          if (called) {
-            return
+        then.call(
+          x, (v) => {
+            if (called) {
+              return
+            }
+            called = true
+            resolvedPromise(promise, v)
+          }, (r) => {
+            if (called) {
+              return
+            }
+            called = true
+            rejectedPromise(promise, r)
           }
-          called = true
-          resolvedPromise(promise, v)
-        }, (r) => {
-          if (called) {
-            return
-          }
-          called = true
-          rejectedPromise(promise, r)
-        })
+        )
       } catch (error) {
         if (called) {
           return
@@ -92,24 +102,25 @@ function resolvedPromise(promise, x) {
         rejectedPromise(promise, error)
       }
       return
-    } else { // x 不是对象也不是函数
+    } else {
       fulfilledPromise(promise, x)
       return
-    }
+    } 
+  } else { // x不是对象或者函数
+    fulfilledPromise(promise, x)
+    return
   }
 }
 // promise 状态改变后执行 then
 function runCbs(cbs, value) {
   cbs.forEach(cb => cb(value))
 }
-
 class Promise {
-  // Promise 接收一个函数作为参数
   constructor(fn) {
     this.status = statusMap.PENDING
     this.value = undefined
     this.reason = undefined
-    // then fulfilled callback
+    // then fulfilled callback   
     this.fulfilledCbs = []
     // then rejected callback
     this.rejectedCbs = []
@@ -118,8 +129,8 @@ class Promise {
     }, (reason) => {
       rejectedPromise(this, reason)
     })
-  }
-
+  } 
+  // 两个参数 
   then(onFulfilled, onRejected) {
     const promise1 = this
     const promise2 = new Promise(() => {})
@@ -145,7 +156,7 @@ class Promise {
       }
       setTimeout(() => {
         try {
-          const x = onRejected(promise1.value)
+          const x = onRejected(promise1.reason)
           // 根据返回值来决定返回的 promise2
           resolvedPromise(promise2, x)
         } catch (error) {
@@ -155,14 +166,14 @@ class Promise {
     }
     if (promise1.status === statusMap.PENDING) {
       onFulfilled = isFunction(onFulfilled)
-        ? onFulfilled
-        : value => value
+      ? onFulfilled
+      : value => value
       onRejected = isFunction(onRejected)
-        ? onRejected
-        : err => {
+      ? onRejected
+      : err => {
           throw err
-      }
-      
+        }
+
       promise1.fulfilledCbs.push(() => {
         setTimeout(() => {
           try {
@@ -200,8 +211,6 @@ Promise.deferred = function () {
     deferred.resolve = resolve
     deferred.reject = reject
   })
-
   return deferred
 }
-
 module.exports = Promise

@@ -129,7 +129,17 @@ class Promise {
     }, (reason) => {
       rejectedPromise(this, reason)
     })
-  } 
+  }
+  static resolve(value) {
+    if (isPromise(value)) {
+      return value
+    } else {
+      return new Promise(resolve => resolve(value))
+    }
+  }
+  static reject(reason) {
+    return new Promise((_resolve, reject) => reject(reason))
+  }
   // 两个参数 
   then(onFulfilled, onRejected) {
     const promise1 = this

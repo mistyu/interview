@@ -199,6 +199,32 @@ class Promise {
     }
     return promise2
   }
+  // 接收一个数组
+  all(promises) {
+    // 判断promises是否是一个数组
+    const res = []
+    let index = 0
+    return new Promise((resolve, reject) => {
+      function addData(key, value) {
+        res[key] = value
+        index++
+        if (index === promises.length) {
+          resolve(res)
+        }
+      }
+      for (let i = 0; i < promises.length; i++) {
+        index = i
+        const p = promises[i]
+        if (p instanceof Promise) {
+          p.then(value => addData(i, value), reason => reject(reason))
+        } else {
+          // 普通值
+          addData(i, p)
+        }
+      }
+    })
+    
+  }
 }
 
 // 如何测试？

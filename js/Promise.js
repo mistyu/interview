@@ -44,7 +44,7 @@ function isObject(obj) {
 function resolvedPromise(promise, x) {
   // promise 和 x 指向相同会出现循环调用直接 return
   if (promise === x) {
-    rejectedPromise(promise, new TypeError('cant be the same'))
+    rejectedPromise(promise, new TypeError('Chaining cycle detected for promise #<Promise>'))
     return
   }
   // x 是一个 promise 
@@ -124,9 +124,9 @@ class Promise {
     this.fulfilledCbs = []
     // then rejected callback
     this.rejectedCbs = []
-    fn((value) => {
+    fn(value => {
       resolvedPromise(this, value)
-    }, (reason) => {
+    }, reason => {
       rejectedPromise(this, reason)
     })
   }
@@ -209,6 +209,10 @@ class Promise {
     }
     return promise2
   }
+  // 接收一个失败的 callback
+  catch(callback) {
+    return this.then(undefined, callback)
+  }
   // 接收一个数组
   all(promises) {
     // 判断promises是否是一个数组
@@ -234,6 +238,17 @@ class Promise {
       }
     })
     
+  }
+  // 接收一个 callback，并返回一个 promise
+  finally(callback) {
+    return this.then(value => {
+      return Promise.resolve(callback()).then(() => value)
+    }, reason => {
+      return Promise.resolve(callback()).then(() => {
+        throw reason
+      })
+      
+    })
   }
 }
 

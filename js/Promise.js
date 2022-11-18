@@ -44,7 +44,7 @@ function isObject(obj) {
 function resolvedPromise(promise, x) {
   // promise 和 x 指向相同会出现循环调用直接 return
   if (promise === x) {
-    rejectedPromise(promise, new TypeError('cant be the same'))
+    rejectedPromise(promise, new TypeError('Chaining cycle detected for promise #<Promise>'))
     return
   }
   // x 是一个 promise 
@@ -124,12 +124,22 @@ class Promise {
     this.fulfilledCbs = []
     // then rejected callback
     this.rejectedCbs = []
-    fn((value) => {
+    fn(value => {
       resolvedPromise(this, value)
-    }, (reason) => {
+    }, reason => {
       rejectedPromise(this, reason)
     })
-  } 
+  }
+  static resolve(value) {
+    if (isPromise(value)) {
+      return value
+    } else {
+      return new Promise(resolve => resolve(value))
+    }
+  }
+  static reject(reason) {
+    return new Promise((_resolve, reject) => reject(reason))
+  }
   // 两个参数 
   then(onFulfilled, onRejected) {
     const promise1 = this
@@ -198,6 +208,47 @@ class Promise {
       })
     }
     return promise2
+  }
+  // 接收一个失败的 callback
+  catch(callback) {
+    return this.then(undefined, callback)
+  }
+  // 接收一个数组
+  all(promises) {
+    // 判断promises是否是一个数组
+    const res = []
+    let index = 0
+    return new Promise((resolve, reject) => {
+      function addData(key, value) {
+        res[key] = value
+        index++
+        if (index === promises.length) {
+          resolve(res)
+        }
+      }
+      for (let i = 0; i < promises.length; i++) {
+        index = i
+        const p = promises[i]
+        if (p instanceof Promise) {
+          p.then(value => addData(i, value), reason => reject(reason))
+        } else {
+          // 普通值
+          addData(i, p)
+        }
+      }
+    })
+    
+  }
+  // 接收一个 callback，并返回一个 promise
+  finally(callback) {
+    return this.then(value => {
+      return Promise.resolve(callback()).then(() => value)
+    }, reason => {
+      return Promise.resolve(callback()).then(() => {
+        throw reason
+      })
+      
+    })
   }
 }
 

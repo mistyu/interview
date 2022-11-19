@@ -247,7 +247,55 @@ class Promise {
       return Promise.resolve(callback()).then(() => {
         throw reason
       })
-      
+    })
+  }
+  race(promises) {
+    return new Promise((resolve, reject) => {
+      for (const promise of promises) {
+        Promise.resolve(promise).then(resolve, reject)
+      }
+    })
+  }
+  any(promises) {
+    let res = []
+    let count = 0
+    return new Promise((resolve, reject) => {
+      for (let i = 0; i < promises.length; i++) {
+        Promise.resolve(promises[i]).then(resolve, reason => {
+          res[i] = {
+            status: statusMap.REJECTED,
+            reason
+          }
+          count++
+          if (count === promises.length) {
+            reject(new Error('没有promise成功'))
+          }
+        })
+      }
+    })
+  }
+  allSettled(promises) {
+    let res = []
+    let count = 0
+    return new Promise((resolve, reject) => {
+      const processResult = (res, index, status) => {
+        res[index] = { 
+          status,
+          val: res
+        }
+        count++
+        if (count === promises.length) {
+          resolve(res)
+        }
+      }
+
+      for (let i = 0; i < promises.length; i++) {
+        Promise.resolve(promises[i]).then(value => {
+          processResult(value, i, statusMap.FULFILLED)
+        }, reason => {
+          processResult(reason, i, statusMap.REJECTED)
+        })
+      }
     })
   }
 }

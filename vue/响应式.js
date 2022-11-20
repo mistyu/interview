@@ -16,7 +16,7 @@ class Observer {
   // ...
   constructor (value) {
     // ...
-    // 依赖
+    // 依赖，ob.dep
     this.dep = new Dep()
     // 将实例挂载到观察对象的 __ob__ 属性
     def(value, '__ob__', this)
@@ -133,9 +133,9 @@ class Dep {
   }
 }
 
-class Watch {
+class Watcher {
   // noop 用户 watcher
-  constructor (vm, expOrFn /* updateComponet 或者 watch / computed */, cb, options, isRenderWatcher) {
+  constructor (vm, expOrFn /* updateComponet */, cb, options, isRenderWatcher) {
     this.vm = vm
     // 渲染 watcher
     if (isRenderWatcher) {

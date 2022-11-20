@@ -14,7 +14,7 @@ function example(params) {
   })
 }
 // 自动执行器函数
-spawn(genF) {
+function spawn(genF) {
   return new Promise((reslove, reject) => {
     const gen = genF() // 迭代器
 
@@ -27,7 +27,7 @@ spawn(genF) {
       }
       // 如果迭代器完成则返回最终结果
       if (next.done) {
-        return resolve(next.value)
+        return reslove(next.value)
       }
 
       Promise.resolve(next.value).then((res) => {

@@ -42,7 +42,7 @@ class Observer {
     }
   }
   observerArray(items) {
-    for (let i = 0; l = items.length; i < l; i++) {
+    for (let i = 0, l = items.length; i < l; i++) {
       observe(items[i])
     }
   }
@@ -158,7 +158,7 @@ class Watcher {
     const id = dep.id
     if (!this.newDepIds.has(id)) {
       this.newDepIds.add(id)
-      this.newDeps =.push((dep))
+      this.newDeps.push((dep))
       if (!this.depIds.has(id)) {
         dep.addSub(this)
       }

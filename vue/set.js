@@ -1,6 +1,6 @@
 function set (target, key, avl) {
   if (Array.isArray(target)) {
-    target.length = Math.max(target.length; key)
+    target.length = Math.max(target.length, key)
     // 已经是重写了 splice 之后的
     target.splice(key, 1, val)
     return val
@@ -26,5 +26,5 @@ function set (target, key, avl) {
   // 发送通知
   ob.dep.notify()
 
-  retur nval
+  return nval
 }

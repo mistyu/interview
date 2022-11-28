@@ -214,7 +214,7 @@ class Promise {
     return this.then(undefined, callback)
   }
   // 接收一个数组
-  all(promises) {
+  static all(promises) {
     // 判断promises是否是一个数组
     const res = []
     let index = 0
@@ -227,7 +227,6 @@ class Promise {
         }
       }
       for (let i = 0; i < promises.length; i++) {
-        index = i
         const p = promises[i]
         if (p instanceof Promise) {
           p.then(value => addData(i, value), reason => reject(reason))
@@ -240,7 +239,7 @@ class Promise {
     
   }
   // 接收一个 callback，并返回一个 promise
-  finally(callback) {
+  static finally(callback) {
     return this.then(value => {
       return Promise.resolve(callback()).then(() => value)
     }, reason => {
@@ -249,14 +248,14 @@ class Promise {
       })
     })
   }
-  race(promises) {
+  static race(promises) {
     return new Promise((resolve, reject) => {
       for (const promise of promises) {
         Promise.resolve(promise).then(resolve, reject)
       }
     })
   }
-  any(promises) {
+  static any(promises) {
     let res = []
     let count = 0
     return new Promise((resolve, reject) => {
@@ -274,7 +273,7 @@ class Promise {
       }
     })
   }
-  allSettled(promises) {
+  static allSettled(promises) {
     let res = []
     let count = 0
     return new Promise((resolve, reject) => {

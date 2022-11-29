@@ -53,4 +53,3 @@ class AutoInsertExternalsCDNToHtml {
 
 module.exports = AutoInsertExternalsCDNToHtml
 ```
-

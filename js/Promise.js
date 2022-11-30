@@ -277,10 +277,10 @@ class Promise {
     let res = []
     let count = 0
     return new Promise((resolve, reject) => {
-      const processResult = (res, index, status) => {
+      const processResult = (value, index, status) => {
         res[index] = { 
           status,
-          val: res
+          value
         }
         count++
         if (count === promises.length) {

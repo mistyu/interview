@@ -42,3 +42,12 @@ function initComputed (vm, computed) {
   // ...
   new Watcher(vm, getter /* conputed 中的函数 */, noop, computedWatcherOptions)
 }
+
+// Vue3 computed
+function computed (getter) {
+  const result = ref()
+
+  effect(() => (result.value = getter()))
+
+  return result
+}

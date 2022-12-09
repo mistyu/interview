@@ -1,6 +1,6 @@
 // 从 T 中挑选 K 中的属性
-type Pick<T, K extends keyof T> = {
-  [k in K]: T[k]
+export type Pick<T, U extends keyof T> = {
+  [k in U]: T[k]
 }
 type A = 'a' | 'b'
 type B = {
@@ -11,3 +11,5 @@ type B = {
 type D = Pick<B, A>
 
 export {}
+// 接收一个对象类型和一个联合类型 T U，从 T 中挑选 U 中的属性
+

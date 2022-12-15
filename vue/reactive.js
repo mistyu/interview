@@ -12,7 +12,7 @@ function reactive (target) {
       track(track, key)
       const result = Reflect.get(target, key, receiver)
       return convert(result)
-    }
+    },
     set (target, key, value, receiver) {
       const oldValue = Reflect.get(target, key, receiver)
       let result = true

@@ -34,7 +34,7 @@ module.exports = loader
 在插件开发中最重要的两个资源就是 compiler 和 comilation 对象
 * comolier:
   代表了整个 webpack 环境配置
-* compliation:
+* compilation:
   代表了一次资源版本构建
 ```js
 class AutoInsertExternalsCDNToHtml {

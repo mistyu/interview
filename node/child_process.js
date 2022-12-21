@@ -72,13 +72,13 @@ const run = async (command: string, cwd: string = projectRoot) =>
 // 进程间通信
 // 通过以上 4 种 API 创建子进程后，父进程与子进程之间将会创建 IPC（Inter-Process Communication）通道，通过 IPC 通道，父子进程之间通过 message 和 send 来通信。Node 中实现 IPC 通道的是管道（pipe）技术，具体实现细节由 libuv 实现，在 Windows 下由命名管道（named pipe）实现，*nix 系统则采用 Unix Domain Socket 实现
 // 父进程
-const child3 = fork('./dir/child3_1.js')
+const child4 = fork('./dir/child4_1.js')
 
-child3.on('message', (m)=>{
+child4.on('message', (m)=>{
   console.log('message from child: ' + JSON.stringify(m))
 })
 
-child3.send({from: 'parent'})
+child4.send({from: 'parent'})
 
 // 子进程
 process.on('message', function(m){

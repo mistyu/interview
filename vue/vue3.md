@@ -26,3 +26,31 @@ runner.effect.stop()
 
 ### watch 回调函数的第三个参数
 一个用于注册副作用清理的回调函数。该回调函数会在副作用下一次重新执行前调用，可以用来清除无效的副作用，例如等待中的异步请求
+
+### Vue3 重写数组 API
+**数组的查找方法**
+这些方法内部为了找到给定的值，用代理对象查找是否包含某个值是不符合预期的
+
+```js
+const obj = {}
+const arr = reactive([obj])
+arr.includes(arr[0]) // true
+arr.includes(obj) // false
+```
+Vue 重写了 `includes`, `indexOf`, `lastIndexOf` 这些响应式数据的原型方法
+
+将原始对象存于响应式数据的 raw 中，调用 raw 来判断即可
+
+**隐式修改数组长度的原型方法**
+```js
+const arr = reactive([])
+effect(() => {
+  arr.push(1) // 设置了 length 属性
+})
+effect(() => {
+  arr.push(1) // 读取了 lenth 属性
+})
+```
+这样会导致无限调用副作用函数
+
+Vue 重写了 `pop`, `shift`, `unshift`, `pop`, `splice` 方法，通过设置了一个变量 `shouldTrack`，`shouldTrack`为 `true` 并且 key 是 `length` 的情况下才会收集依赖

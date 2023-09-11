@@ -28,4 +28,31 @@ const ob1 = new Observer('ob1')
 subject.addObsever(ob1)
 subject.notify('study')
 
-// Vue 响应式基于此实现
+// Vue2 响应式基于此实现
+
+class Dep {
+  constructor () {
+    this.dep = []
+  }
+  update () {
+    this.dep.forEach(d => {
+      d.notify()
+    })
+  }
+}
+
+class Watcher {
+  constructor () {
+    this.fns = []
+  }
+
+  notify (...args) {
+    this.fns.forEach(fn => {
+      fn(...args)
+    })
+  }
+}
+
+const dep = new Dep()
+const watcher = new Watcher()
+dep.add(watcher)

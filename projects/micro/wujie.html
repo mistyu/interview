@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>wujie</title>
+</head>
+<body>
+  <div>基座的代码，不被子应用的样式污染</div>
+  <div id="container"></div>
+
+  <script>
+    const container = document.querySelector('#container')
+
+    const strTmpWithCss = `
+    <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>wujie</title>
+        <style>
+          div {
+            background-color: red;
+          }
+        </style> 
+      </head>
+      <body>
+        <div id="inner">hellow wj</div>
+      </body>
+    </html>
+    `
+
+    const strScript = `
+      window.a = 100; // 此应用不会影响父应用
+      console.log(window.a)
+      const ele = document.querySelector('#inner')
+      console.log(ele)
+    `
+
+    function createIframe() {
+      const iframe = document.createElement('iframe')
+      iframe.src = 'about:blank'
+      document.body.appendChild(iframe)
+
+      return iframe
+    }
+
+    function createSandbox() {
+      const sandbox = {
+        iframe: createIframe(),
+        shadowRoot: null
+      }
+      return sandbox
+    }
+
+    function injectTemplate(sandbox, template) {
+      const wrapper = document.createElement('div')
+      wrapper.innerHTML = template
+      sandbox.shadowRoot.appendChild(wrapper)
+    }
+
+    function runScriptInSandbox(sandbox, script) {
+      const iframeWindow = sandbox.iframe.contentWindow
+      const scriptElement = iframeWindow.document.createElement('script')
+      // 获取 head 将 script 插入进去
+      const headElement = iframeWindow.document.querySelector('head')
+
+      // 代理
+      Object.defineProperty(iframeWindow.Document.prototype, 'querySelector', {
+        get() {
+          // document.querySelector() -> sandbox.shadowRoot['querySelector']()
+          return new Proxy(sandbox.shadowRoot['querySelector'], {
+            // thisArg -> 访问 querySelector 所在的上下文this
+            apply(_target, thisArg, args) {
+              console.log(_target, thisArg, args)
+              return thisArg.querySelector.apply(sandbox.shadowRoot, args)
+            }
+          })
+        }
+      })
+
+      scriptElement.textContent = script
+      headElement.appendChild(scriptElement)
+    }
+    // 定义一个组件来使用
+    function createCustomElement() {
+      class Wujie extends HTMLElement {
+        connectedCallback() {
+          // 1) 创建沙箱
+          const sandbox = createSandbox()
+          // 2) 创建shadowDOM
+          sandbox.shadowRoot = this.attachShadow({ mode: 'open' })
+          // 3) 将 html、css 放到 shadowDOM
+          injectTemplate(sandbox, strTmpWithCss)
+          // 4) 将 script 放到 iframe
+          runScriptInSandbox(sandbox, strScript)
+        }
+      }
+
+      window.customElements.define('wujie-app', Wujie)
+      container.appendChild(document.createElement('wujie-app'))
+    }
+    createCustomElement()
+  </script>
+</body>
+</html>
+
+<!-- tif2019 -->

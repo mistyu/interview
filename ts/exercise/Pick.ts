@@ -3,3 +3,19 @@
 type MyPick<T, U extends keyof T> = {
   [k in U]: T[k] // 这部分表示一个迭代器，它遍历类型 U 中的每一个键。k 是当前迭代的键。
 }
+
+interface C {
+  a: number;
+  b: string;
+}
+
+interface D {
+  c: number;
+  d: string;
+}
+
+
+type B = Omit<C, 'b' | 'd'>
+
+
+type A = Record<'a' &'b', number>

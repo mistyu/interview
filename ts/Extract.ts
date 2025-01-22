@@ -1,5 +1,5 @@
 // 提取Type中所有能够赋值给Union的属性，将这些属性构成一个新的类型
-type Extract<T, U extends keyof T> = T extends U ? T : never
+type Extract<T, U> = T extends U ? T : never
 
 export {}
 

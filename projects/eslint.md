@@ -46,7 +46,7 @@ module.exports = {
   ]
 }
 ```
-tip: 相关依赖记得在 package.json 中 npm i xxx, 确保在项目中使用时不会因为没有下载依赖不起作用
+tip: 相关依赖记得在 package.json 中 npm i xxx -D, 确保在项目中使用时不会因为没有下载依赖不起作用
 
 * 在项目中引用
 .eslintrc.js

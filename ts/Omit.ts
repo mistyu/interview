@@ -1,4 +1,3 @@
-import { Exclude } from './Exclude'
 import { Pick } from './Pick'
 // 从 T 去去掉 K 中的属性
 type Omit<T, U extends keyof any> = Pick<T, Exclude<keyof T, U>>

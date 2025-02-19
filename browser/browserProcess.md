@@ -3,7 +3,8 @@
 * 管理用户界面和窗口，处理输入的 URL，标签页的创建和管理，书签，协调其他所有的进程
 
 2. Render(渲染进程)
-* 将 HTML、CSS、JS 转换成页面
-* GPU 进程：绘制
+![alt text](render.png)
+* GPU 进程：
+![alt text](gpu.png)
 * 网络进程：负责网络资源的加载
 * 插件进程

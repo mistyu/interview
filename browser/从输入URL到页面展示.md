@@ -12,7 +12,7 @@
 9. 传输完成后，渲染进程告诉主进程，主进程更新导航栏状态，历史栈等
 10. 渲染进程查看 HTML，如果有 preload，dns-prefetch 等属性会优先处理 
 11. 然后从上到下解析，构建 DOM 树，遇到 CSS 样式表会异步下载，之后构建 CSSOM 树
-12. 解析过程遇到不带有 async defer 的 script 时，是会阻止 dom 解析，async 是异步加载 js 然后加载完执行 js 会阻止 js 解析
+12. 解析过程遇到不带有 async defer 的 script 时，是会阻止 dom 解析，async 是异步加载 js 然后加载完执行 js 会阻止 dom 解析
 13. 将 DOM 树和 CSSOM 树结合，生成 render 树
 14. 将 dom 节点布局到正确的位置上
 15. 绘制图层树，栅格化将图块转化成位图，最后生成页面到浏览器页面上

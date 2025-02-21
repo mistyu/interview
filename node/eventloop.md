@@ -13,3 +13,23 @@
 tips: 在完成队列切换前都会情况微任务代码
 
 process.nextTick() 的微任务优先级最高
+
+```js
+const fs = require('fs')
+setTimeout(() => {
+  console.log('setTimeout')
+}, 0)
+setImmediate(() => {
+  console.log('setImmediate')
+})
+fs.readFile(__filename, () => {
+  console.log('I/O callback')
+  setTimeout(() => {
+    console.log('setTimeout inside I/O')
+  }, 0)
+  setImmediate(() => {
+    console.log('setImmediate inside I/O')
+  })
+})
+console.log('Synchronous log')
+```
